@@ -1,1 +1,1 @@
-add_library(core STATIC queue.cpp)
+add_library(core STATIC thread_pool.cpp)

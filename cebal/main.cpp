@@ -1,13 +1,16 @@
 #include <iostream>
+
 #include "core/queue.h"
 
 using namespace core;
 
 int main() {
     auto q = Queue<int>();
-    int val = 10;
-    auto res = q.send(val);
-    auto r = q.recv().value();
-    std::cout << r << std::endl;
+    q.send(42);
+    q.send(43);
+    q.send(44);
+    std::cout << q.recv().value() << std::endl;
+    std::cout << q.recv().value() << std::endl;
+    std::cout << q.recv().value() << std::endl;
     return 0;
 }
