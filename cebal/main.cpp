@@ -1,16 +1,18 @@
 #include <iostream>
 
 #include "core/queue.h"
+#include "core/thread_pool.h"
 
 using namespace core;
 
 int main() {
-    auto q = Queue<int>();
-    q.send(42);
-    q.send(43);
-    q.send(44);
-    std::cout << q.recv().value() << std::endl;
-    std::cout << q.recv().value() << std::endl;
-    std::cout << q.recv().value() << std::endl;
+    auto tp = ThreadPool(5);
+    for (int i; i < 10; i++) {
+        tp.execute([i]() {
+            std::cout << "# ";
+            std::cout << i << std::endl;
+        });
+    }
+    tp.start();
     return 0;
 }

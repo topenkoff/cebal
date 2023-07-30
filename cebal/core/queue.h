@@ -14,6 +14,7 @@ class Queue {
    public:
     Queue() = default;
     ~Queue() = default;
+    Queue& operator=(Queue other) { return *this; }
     bool send(T value) {
         q.push(value);
         return true;
