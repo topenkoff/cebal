@@ -3,37 +3,35 @@
 #ifndef QUEUE_H
 #define QUEUE_H
 
-#include <mutex>
+#include <condition_variable>
+#include <deque>
 #include <optional>
-#include <queue>
+#include <shared_mutex>
 
 namespace core {
 
 template <typename T>
 class Queue {
    public:
-    Queue() = default;
-    ~Queue() = default;
-    Queue& operator=(Queue other) { return *this; }
-    bool send(T value) {
-        q.push(value);
-        return true;
+    void send(T value) {
+        std::unique_lock<std::shared_mutex> guard(m);
+        data.push_back(value);
+        guard.unlock();
+        cv.notify_one();
     }
-    std::optional<T> recv() {
-        std::lock_guard<std::mutex> lock(q_mutex);
 
-        if (q.empty()) {
-            return std::nullopt;
-        } else {
-            auto value = std::move(q.front());
-            q.pop();
-            return value;
-        }
+    std::optional<T> recv() {
+        std::unique_lock<std::shared_mutex> guard(m);
+        cv.wait(guard, [this] { return !data.empty(); });
+        auto value = data.front();
+        data.pop_front();
+        return value;
     }
 
    private:
-    std::queue<T> q;
-    std::mutex q_mutex;
+    std::deque<T> data;
+    std::shared_mutex m;
+    std::condition_variable_any cv;
 };
 
 };  // namespace core
