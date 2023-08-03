@@ -2,6 +2,9 @@ PROJECT_ROOT=$(PWD)
 SRC_DIR = $(PROJECT_ROOT)
 BUILD_DIR = $(PROJECT_ROOT)/build
 
+run: build
+	${BUILD_DIR}/cebal/cebal
+
 clean:
 	rm -rf build || true
 
@@ -14,7 +17,5 @@ build:
 
 rebuild: clean build
 
-run: build
-	${BUILD_DIR}/cebal/cebal
 
 .PHONY: clean build rebuild

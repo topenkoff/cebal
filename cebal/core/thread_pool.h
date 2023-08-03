@@ -15,6 +15,7 @@ using Task = std::function<void()>;
 class ThreadPool {
    public:
     explicit ThreadPool(size_t threads);
+    ~ThreadPool();
 
     // Non-copyable
     ThreadPool(const ThreadPool&) = delete;
@@ -24,10 +25,22 @@ class ThreadPool {
     ThreadPool(ThreadPool&&) = delete;
     ThreadPool& operator=(ThreadPool&&) = delete;
 
-    ~ThreadPool();
-    void execute(Task task);
+    void Start();
+
+    void Submit(Task);
+
+    // Locates current thread pool from worker thread
+    // static ThreadPool* Current();
+
+    // Waits until outstanding work count reaches zero
+    // void WaitIdle();
+
+    void Stop();
+
+    int Size() { return task_queue.Size(); }
 
    private:
+    size_t num_threads;
     Queue<Task> task_queue;
     std::vector<std::thread> workers;
 };
