@@ -44,13 +44,8 @@ void ThreadPool::Stop() {
     }
 }
 
-ThreadPool::~ThreadPool() {}
-
-// ThreadPool::~ThreadPool() {
-//     task_queue.close();
-//     for (auto worker = workers.begin(); worker != workers.end(); worker++) {
-//         worker->join();
-//     }
-// }
+ThreadPool::~ThreadPool() {
+    Stop();
+}
 
 }  // namespace core
