@@ -16,7 +16,6 @@ class Queue {
     void send(T value) {
         std::unique_lock<std::shared_mutex> guard(m);
         data.push_back(value);
-        guard.unlock();
         cv.notify_one();
     }
 
@@ -26,7 +25,6 @@ class Queue {
             if (!data.empty()) {
                 auto value = data.front();
                 data.pop_front();
-                guard.unlock();
                 return value;
             } else if (data.empty() && !closed) {
                 cv.wait(guard);
@@ -39,7 +37,6 @@ class Queue {
     void close() {
         std::unique_lock<std::shared_mutex> guard(m);
         closed = true;
-        guard.unlock();
         cv.notify_all();
     }
 

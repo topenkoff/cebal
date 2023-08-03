@@ -17,10 +17,9 @@ ThreadPool::ThreadPool(size_t threads) {
 void ThreadPool::Start() {
     size_t num = 0;
     while (num < num_threads) {
-        auto queue = &task_queue;
-        auto task = [queue] {
+        auto task = [this] {
             while (true) {
-                auto job = queue->recv();
+                auto job = this->task_queue.recv();
                 if (job.has_value()) {
                     job.value()();
                 } else {
@@ -40,7 +39,8 @@ void ThreadPool::Submit(Task task) { task_queue.send(task); }
 void ThreadPool::Stop() {
     task_queue.close();
     for (auto worker = workers.begin(); worker != workers.end(); worker++) {
-        worker->join();
+        if (worker->joinable())
+            worker->join();
     }
 }
 
