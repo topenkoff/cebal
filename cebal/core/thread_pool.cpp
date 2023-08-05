@@ -1,6 +1,7 @@
 #include "thread_pool.h"
 
 #include <iostream>
+#include <thread>
 #include <vector>
 
 #include "fmt/core.h"
@@ -27,7 +28,7 @@ void ThreadPool::Start() {
                 }
             }
         };
-        workers.push_back(std::thread(task));
+        workers.emplace_back(std::thread(task));
         num++;
     }
 }
@@ -36,16 +37,12 @@ void ThreadPool::Start() {
 
 void ThreadPool::Submit(Task task) { task_queue.send(task); }
 
-void ThreadPool::Stop() {
-    task_queue.close();
-    for (auto worker = workers.begin(); worker != workers.end(); worker++) {
-        if (worker->joinable())
-            worker->join();
-    }
-}
-
 ThreadPool::~ThreadPool() {
-    Stop();
+    task_queue.close();
+
+    for (auto& worker : workers) {
+        if (worker.joinable()) worker.join();
+    }
 }
 
 }  // namespace core

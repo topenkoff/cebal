@@ -35,8 +35,6 @@ class ThreadPool {
     // Waits until outstanding work count reaches zero
     // void WaitIdle();
 
-    void Stop();
-
     int Size() { return task_queue.Size(); }
 
    private:
