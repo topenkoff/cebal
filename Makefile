@@ -17,5 +17,8 @@ build:
 
 rebuild: clean build
 
+fmt:
+	find cebal -iname *.h -o -iname *.cpp | xargs clang-format -i
+
 
 .PHONY: clean build rebuild
