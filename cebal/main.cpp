@@ -4,7 +4,7 @@
 #include "fmt/core.h"
 
 int main() {
-    auto pool = core::ThreadPool(10);
+    auto pool = core::ThreadPool{ 10 };
     for (int i=0; i < 1000; i++) {
         pool.Submit([i]() {
             fmt::println("# {}", i);
