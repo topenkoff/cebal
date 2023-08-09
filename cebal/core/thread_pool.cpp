@@ -20,7 +20,7 @@ void ThreadPool::Start() {
     while (num < num_threads) {
         auto task = [this] {
             while (true) {
-                auto job = this->task_queue.recv();
+                auto job = this->task_queue.Recv();
                 if (job.has_value()) {
                     job.value()();
                 } else {
@@ -35,10 +35,10 @@ void ThreadPool::Start() {
 
 // ThreadPool* ThreadPool::Current() {}
 
-void ThreadPool::Submit(Task task) { task_queue.send(task); }
+void ThreadPool::Submit(Task task) { task_queue.Send(task); }
 
 ThreadPool::~ThreadPool() {
-    task_queue.close();
+    task_queue.Close();
 
     for (auto& worker : workers) {
         if (worker.joinable()) worker.join();
